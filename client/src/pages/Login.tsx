@@ -21,7 +21,8 @@ export const Login: React.FC = () => {
       localStorage.setItem('pjaa_admin_user', JSON.stringify(response.data.user));
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed. Please check your credentials.');
+      const detailMsg = err.response?.data?.details || err.response?.data?.error || 'Login failed. Please check your credentials.';
+      setError(detailMsg);
     } finally {
       setLoading(false);
     }
