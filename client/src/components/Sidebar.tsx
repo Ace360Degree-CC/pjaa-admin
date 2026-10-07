@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   FileText, 
+  UserCircle,
   LogOut, 
   PlusCircle,
   Menu,
@@ -31,6 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose, onTogg
   const navItems = [
     { label: 'Dashboard', path: '/', icon: LayoutDashboard },
     { label: 'Pages & CMS', path: '/pages', icon: FileText },
+    { label: 'My Profile', path: '/profile', icon: UserCircle },
   ];
 
   return (
@@ -115,15 +117,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose, onTogg
         {/* Footer Profile & Logout */}
         <div className="p-4 border-t border-slate-100">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-full bg-red-50 border border-red-200 flex items-center justify-center font-bold text-xs text-red-600">
+            <NavLink
+              to="/profile"
+              onClick={() => onClose?.()}
+              className="flex items-center space-x-2.5 hover:opacity-80 transition-opacity cursor-pointer group"
+            >
+              <div className="w-8 h-8 rounded-full bg-red-50 border border-red-200 flex items-center justify-center font-bold text-xs text-red-600 group-hover:bg-red-100">
                 {superAdmin ? 'SA' : 'AD'}
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-900">{user?.name || 'Admin User'}</p>
+                <p className="text-xs font-bold text-slate-900 group-hover:text-red-600 transition-colors">{user?.name || 'Admin User'}</p>
                 <p className="text-[10px] text-slate-400 font-medium uppercase">{user?.role || 'Admin'}</p>
               </div>
-            </div>
+            </NavLink>
             <button
               onClick={handleLogout}
               title="Log Out"

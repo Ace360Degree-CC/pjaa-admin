@@ -8,6 +8,7 @@ import { PageBuilder } from './pages/PageBuilder';
 import { LeadsList } from './pages/LeadsList';
 import { BlogsList } from './pages/BlogsList';
 import { Settings } from './pages/Settings';
+import { Profile } from './pages/Profile';
 import { Menu } from 'lucide-react';
 
 const ProtectedLayout = () => {
@@ -62,6 +63,7 @@ export const App: React.FC = () => {
           <Route path="/leads" element={<LeadsList />} />
           <Route path="/blogs" element={<BlogsList />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

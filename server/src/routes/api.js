@@ -1,5 +1,5 @@
 import express from 'express';
-import { login, getMe } from '../controllers/authController.js';
+import { login, getMe, updateProfile } from '../controllers/authController.js';
 import { getAllPages, getPageBySlug, createPage, updatePage, deletePage } from '../controllers/pagesController.js';
 import { submitEnquiry, getAllEnquiries, updateEnquiryStatus, deleteEnquiry } from '../controllers/enquiriesController.js';
 import { getAllBlogs, getBlogBySlug, createBlog, updateBlog, deleteBlog } from '../controllers/blogsController.js';
@@ -12,6 +12,8 @@ const router = express.Router();
 // --- Auth Routes ---
 router.post('/auth/login', login);
 router.get('/auth/me', authenticateToken, getMe);
+router.put('/auth/profile', authenticateToken, updateProfile);
+router.put('/admin/profile', authenticateToken, updateProfile);
 
 // --- Public Form Endpoint ---
 router.post('/enquiries', submitEnquiry);
