@@ -4,12 +4,20 @@ import {
   LayoutDashboard, 
   FileText, 
   LogOut, 
-  PlusCircle 
+  PlusCircle,
+  Menu,
+  X
 } from 'lucide-react';
 
 import { getCurrentUser, isSuperAdmin } from '../utils/auth';
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  onToggle?: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose, onToggle }) => {
   const navigate = useNavigate();
   const user = getCurrentUser();
   const superAdmin = isSuperAdmin();
@@ -26,80 +34,106 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-200/80 flex flex-col justify-between shrink-0 h-screen sticky top-0 shadow-sm">
-      <div>
-        {/* Brand Header */}
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center font-bold text-white text-lg shadow-md shadow-red-600/20">
-              P
-            </div>
-            <div>
-              <h1 className="font-bold text-slate-900 text-sm tracking-tight">Praveen J & Assoc.</h1>
-              <p className="text-xs text-red-600 font-semibold">CMS Admin Panel</p>
-            </div>
-          </div>
-        </div>
+    <>
+      {/* Mobile backdrop overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 md:hidden transition-opacity"
+          onClick={onClose}
+        />
+      )}
 
-        {/* Quick Action Button (Super Admin Only) */}
-        {superAdmin && (
-          <div className="p-4">
-            <NavLink
-              to="/pages/builder/new"
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow-md shadow-red-600/20 flex items-center justify-center space-x-2 text-xs transition-all duration-200 cursor-pointer"
+      {/* Sidebar container */}
+      <aside 
+        className={`fixed md:sticky top-0 left-0 z-50 md:z-30 w-64 bg-white border-r border-slate-200/80 flex flex-col justify-between shrink-0 h-screen shadow-sm transition-all duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0 md:ml-0' : '-translate-x-full md:-ml-64'
+        }`}
+      >
+        <div>
+          {/* Brand Header */}
+          <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center font-bold text-white text-lg shadow-md shadow-red-600/20">
+                P
+              </div>
+              <div>
+                <h1 className="font-bold text-slate-900 text-sm tracking-tight">Praveen J & Assoc.</h1>
+                <p className="text-xs text-red-600 font-semibold">CMS Admin Panel</p>
+              </div>
+            </div>
+            {/* Burger toggle button inside sidebar header */}
+            <button
+              onClick={onToggle || onClose}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+              title="Toggle Sidebar"
             >
-              <PlusCircle className="w-4 h-4" />
-              <span>Create New Page</span>
-            </NavLink>
+              <X className="w-5 h-5 md:hidden" />
+              <Menu className="w-5 h-5 hidden md:block" />
+            </button>
           </div>
-        )}
 
-        {/* Navigation List */}
-        <nav className="px-3 py-2 space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
+          {/* Quick Action Button (Super Admin Only) */}
+          {superAdmin && (
+            <div className="p-4">
               <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.path === '/'}
-                className={({ isActive }) =>
-                  `flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                    isActive
-                      ? 'bg-red-50 text-red-700 border border-red-200 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
-                  }`
-                }
+                to="/pages/builder/new"
+                onClick={() => onClose?.()}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow-md shadow-red-600/20 flex items-center justify-center space-x-2 text-xs transition-all duration-200 cursor-pointer"
               >
-                <Icon className="w-4 h-4" />
-                <span>{item.label}</span>
+                <PlusCircle className="w-4 h-4" />
+                <span>Create New Page</span>
               </NavLink>
-            );
-          })}
-        </nav>
-      </div>
+            </div>
+          )}
 
-      {/* Footer Profile & Logout */}
-      <div className="p-4 border-t border-slate-100">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-full bg-red-50 border border-red-200 flex items-center justify-center font-bold text-xs text-red-600">
-              {superAdmin ? 'SA' : 'AD'}
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900">{user?.name || 'Admin User'}</p>
-              <p className="text-[10px] text-slate-400 font-medium uppercase">{user?.role || 'Admin'}</p>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            title="Log Out"
-            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
+          {/* Navigation List */}
+          <nav className="px-3 py-2 space-y-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  end={item.path === '/'}
+                  onClick={() => onClose?.()}
+                  className={({ isActive }) =>
+                    `flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                      isActive
+                        ? 'bg-red-50 text-red-700 border border-red-200 shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                    }`
+                  }
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </NavLink>
+              );
+            })}
+          </nav>
         </div>
-      </div>
-    </aside>
+
+        {/* Footer Profile & Logout */}
+        <div className="p-4 border-t border-slate-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-full bg-red-50 border border-red-200 flex items-center justify-center font-bold text-xs text-red-600">
+                {superAdmin ? 'SA' : 'AD'}
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-900">{user?.name || 'Admin User'}</p>
+                <p className="text-[10px] text-slate-400 font-medium uppercase">{user?.role || 'Admin'}</p>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              title="Log Out"
+              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 };

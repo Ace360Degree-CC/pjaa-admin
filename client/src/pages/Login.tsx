@@ -4,8 +4,8 @@ import api from '../api/client';
 import { Lock, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export const Login: React.FC = () => {
-  const [email, setEmail] = useState('admin@praveenj.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
